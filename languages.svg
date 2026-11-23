@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="190" viewBox="0 0 390 190" role="img" aria-label="Top languages">
+<title>Top languages</title>
+<defs>
+  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#00ff9d"/><stop offset="1" stop-color="#00c8ff"/>
+  </linearGradient>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="3" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<style>
+  text { font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', Arial, sans-serif; }
+  .big   { font-size: 38px; font-weight: 700; fill: #c9d1d9; }
+  .label { font-size: 15px; font-weight: 600; fill: #00ff9d; }
+  .sub   { font-size: 12px; fill: #8b949e; }
+  .title { font-size: 17px; font-weight: 700; fill: #00ff9d; }
+  .row   { font-size: 14px; fill: #c9d1d9; }
+  .val   { font-size: 14px; font-weight: 700; fill: #c9d1d9; }
+  .fade  { opacity: 0; animation: fade .6s ease forwards; }
+  @keyframes fade { to { opacity: 1; } }
+  @keyframes ring { from { stroke-dashoffset: var(--len); } }
+  .ring { animation: ring 1.2s ease-out; }
+  @media (prefers-reduced-motion: reduce) {
+    .fade { animation: none; opacity: 1; } .ring { animation: none; }
+  }
+</style>
+<rect x="0.5" y="0.5" rx="12" width="389" height="189" fill="#0d1117" stroke="#30363d"/>
+<text x="24" y="34" class="title">Top Languages</text>
+<clipPath id="bar"><rect x="24" y="48" width="342" height="10" rx="5"/></clipPath>
+<g clip-path="url(#bar)">
+  <rect x="24.0" y="48" width="342.0" height="10" fill="#3572A5"/>
+</g>
+<g class="fade" style="animation-delay:0.10s"><circle cx="29" cy="85" r="5" fill="#3572A5"/><text x="42" y="90" class="row">Python <tspan fill="#8b949e">100.0%</tspan></text></g>
+<text x="376" y="182" text-anchor="end" class="sub" style="font-size:10px">updated 2026-11-23 20:24 UTC</text>
+</svg>
