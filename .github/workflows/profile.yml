@@ -2,9 +2,9 @@ name: Update profile (snake + cards)
 
 on:
   schedule:
-    # Every 6 hours, at minute 23 (minute 0 is the busiest time on GitHub,
+    # Every 3 hours, at minute 23 (minute 0 is the busiest time on GitHub,
     # and busy jobs can be delayed or skipped).
-    - cron: "23 */6 * * *"
+    - cron: "23 */3 * * *"
   workflow_dispatch: # the "Run workflow" button in the Actions tab
   push:
     branches: [main]
@@ -29,16 +29,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1) The snake: a light version and a dark version, plus a green
-      #    "neon" version that matches the typing text in the README.
+      # 1) The snake. "snake-neon" (dark mode) uses the SAME green colors as
+      #    your profile graph, with a neon green snake. "snake" is for light mode.
       - name: Generate snake
         uses: Platane/snk/svg-only@v3
         with:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
             dist/snake.svg
-            dist/snake-dark.svg?palette=github-dark
-            dist/snake-neon.svg?color_snake=#00ff9d&color_dots=#161b22,#0e4429,#006d32,#26a641,#39ff14
+            dist/snake-neon.svg?color_snake=#00ff9d&color_dots=#161b22,#01311f,#034525,#0f6d31,#00c647
+
+      # 1b) Violet gradient background. If this step has a problem it only
+      #     prints a warning and the plain snake is published.
+      - name: Make the snake violet
+        run: |
+          python3 scripts/style_snake.py dist/snake-neon.svg dark
+          python3 scripts/style_snake.py dist/snake.svg light
 
       # 2) The cards (streak, stats, languages), made by our own script.
       #    If this step fails we still publish the snake (see last step).
@@ -63,7 +69,7 @@ jobs:
           user_name: "github-actions[bot]"
           user_email: "41898282+github-actions[bot]@users.noreply.github.com"
 
-      # 4) Make the job red if the cards failed, so you can see it. test
+      # 4) Make the job red if the cards failed, so you can see it.
       - name: Fail if cards failed
         if: steps.cards.outcome == 'failure'
         run: |
