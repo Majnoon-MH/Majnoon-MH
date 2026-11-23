@@ -63,7 +63,7 @@ jobs:
           user_name: "github-actions[bot]"
           user_email: "41898282+github-actions[bot]@users.noreply.github.com"
 
-      # 4) Make the job red if the cards failed, so you can see it.
+      # 4) Make the job red if the cards failed, so you can see it. test
       - name: Fail if cards failed
         if: steps.cards.outcome == 'failure'
         run: |
