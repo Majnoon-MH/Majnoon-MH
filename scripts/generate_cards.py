@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 test
 """
 Make three profile cards as SVG files. No other website is needed.
 
