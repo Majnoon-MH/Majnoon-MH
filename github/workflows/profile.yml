@@ -1,0 +1,71 @@
+name: Update profile (snake + cards)
+
+on:
+  schedule:
+    # Every 6 hours, at minute 23 (minute 0 is the busiest time on GitHub,
+    # and busy jobs can be delayed or skipped).
+    - cron: "23 */6 * * *"
+  workflow_dispatch: # the "Run workflow" button in the Actions tab
+  push:
+    branches: [main]
+    paths: # run again only when these files change (not on every README edit)
+      - ".github/workflows/profile.yml"
+      - "scripts/**"
+
+# Needed so the job can write to the "output" branch.
+permissions:
+  contents: write
+
+# Never run two copies at the same time.
+concurrency:
+  group: profile-assets
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1) The snake: a light version and a dark version, plus a green
+      #    "neon" version that matches the typing text in the README.
+      - name: Generate snake
+        uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/snake.svg
+            dist/snake-dark.svg?palette=github-dark
+            dist/snake-neon.svg?color_snake=#00ff9d&color_dots=#161b22,#0e4429,#006d32,#26a641,#39ff14
+
+      # 2) The cards (streak, stats, languages), made by our own script.
+      #    If this step fails we still publish the snake (see last step).
+      - name: Generate cards
+        id: cards
+        continue-on-error: true
+        run: python3 scripts/generate_cards.py --out dist
+        env:
+          # Optional: add a secret named PROFILE_TOKEN (a token with the
+          # "read:user" scope) to count PRIVATE contributions too.
+          GH_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+
+      # 3) Publish to the "output" branch. keep_files keeps the old cards if
+      #    step 2 failed, so the README never shows a broken image.
+      - name: Publish to output branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: output
+          keep_files: true
+          user_name: "github-actions[bot]"
+          user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # 4) Make the job red if the cards failed, so you can see it.
+      - name: Fail if cards failed
+        if: steps.cards.outcome == 'failure'
+        run: |
+          echo "::error::The cards step failed. Open that step in the log."
+          exit 1
